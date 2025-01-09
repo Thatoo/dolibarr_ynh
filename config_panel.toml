@@ -1,0 +1,17 @@
+version = "1.0"
+
+[main]
+name = "Main Settings"
+services = ["__APP__"]
+
+    [main.smtp]
+    name = "SMTP to send email from all users' email address"
+
+        [main.smtp.smtp_login_mismatch]
+        ask.en = "Allow Postfix to accept sender login mismatch"
+        ask.fr = "Autoriser Postfix à accepter une différence entre l'email d'envoi et l'identifiant"
+        type = "boolean"
+        yes = "true"
+        no = "false"
+        help.en = "Defaults to 'false'. If 'true', all users will be able to send email from dolibarr using Yunohost's SMTP from their own email. Be carefull, it also means any user will be able, out of Dolibarr, to send emails using any identity from the same domain name. Their is an identity fraud risk."
+        help.fr = "Défault sur 'faux'. Si 'vrai', alors tous les utilisateurs pourront envoyer des emails depuis Dolibarr via le SMTP de Yunohost en utilisant leur propre email. Attention au risque d'usurpation d'identité car cela signifie qu'en dehors de Dolibarr, tous les utilisateurs pourront envoyer des emails aved leur identifiant en utilisant n'importe quel email du nom de domaine."

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+
+php_version=$(ynh_app_setting_get --key=php_version)
+
+#=================================================
+# SPECIFIC GETTERS FOR TOML SHORT KEY
+#=================================================
+
+get__smtp_login_mismatch() {
+    smtp_login_mismatch=$(ls -al /etc/yunohost/hooks.d/conf_regen/70-postfix_accept_sender_login_mismatch | grep -Po "70-postfix_accept_sender_login_mismatch")
+    if [ "$(echo $smtp_login_mismatch)" = "70-postfix_accept_sender_login_mismatch" ]
+    then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
+#=================================================
+# SPECIFIC SETTERS FOR TOML SHORT KEYS
+#=================================================
+
+set__smtp_login_mismatch() {
+    if [ "$smtp_login_mismatch" -eq "0" ]; then
+        rm /etc/yunohost/hooks.d/conf_regen/70-postfix_accept_sender_login_mismatch
+        yunohost tools regen-conf postfix --force
+    elif [ "$smtp_login_mismatch" -eq "1" ]; then
+        ynh_config_add --template="70-postfix_accept_sender_login_mismatch" --destination="/etc/yunohost/hooks.d/conf_regen/70-postfix_accept_sender_login_mismatch"
+        yunohost tools regen-conf postfix --force
+    fi
+    ynh_app_setting_set --app=$app --key=smtp_login_mismatch --value="$smtp_login_mismatch"
+}
+
+#=================================================
+# SPECIFIC RUNNERS FOR TOML SHORT KEYS
+#=================================================
+
+#=================================================
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+
+    ynh_config_add_phpfpm
+}
+
+ynh_app_config_run $1

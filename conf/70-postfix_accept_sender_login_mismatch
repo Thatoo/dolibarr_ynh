@@ -1,0 +1,11 @@
+#!/bin/bash
+
+action=$1
+pending_dir=$4
+postfix_main_conf=$pending_dir/../postfix/etc/postfix/main.cf
+
+[[ "$action" == "pre" ]] || exit 0
+[[ -e $postfix_main_conf ]] || exit 0
+
+sed -e 's/^[^#].*reject_sender_login_mismatch,/#    reject_sender_login_mismatch,/' \
+    -i $postfix_main_conf
